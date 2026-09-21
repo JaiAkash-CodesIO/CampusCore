@@ -29,6 +29,27 @@ if (!studentId) {
 
 }
 
+function formatYearText(year) {
+    const y = parseInt(year);
+    if (y === 1) return "1st Year (Freshman)";
+    if (y === 2) return "2nd Year (Sophomore)";
+    if (y === 3) return "3rd Year (Junior)";
+    if (y === 4) return "4th Year (Senior)";
+    return year ? `Year ${year}` : "-";
+}
+
+function formatDepartmentText(dept) {
+    const map = {
+        "IT": "Information Technology (IT)",
+        "CSE": "Computer Science Engineering (CSE)",
+        "ECE": "Electronics & Communication (ECE)",
+        "EEE": "Electrical & Electronics (EEE)",
+        "MECH": "Mechanical Engineering (MECH)",
+        "CIVIL": "Civil Engineering (CIVIL)"
+    };
+    return map[dept] || dept || "-";
+}
+
 async function loadStudentDetails() {
 
     try {
@@ -44,15 +65,15 @@ async function loadStudentDetails() {
         studentName.textContent = student.name;
         studentEmail.textContent = student.email;
         studentEmailDetails.textContent = student.email;
-        studentIdElement.textContent = student.id;
-        studentDepartment.textContent = student.department;
-        studentYear.textContent = student.year;
+        studentIdElement.textContent = `#STU-${String(student.id).padStart(4, '0')}`;
+        studentDepartment.textContent = formatDepartmentText(student.department);
+        studentYear.textContent = formatYearText(student.year);
 
         profileInitial.textContent =
-            student.name.charAt(0).toUpperCase();
+            student.name ? student.name.charAt(0).toUpperCase() : "S";
 
         welcomeMessage.textContent =
-            `Welcome, ${student.name}!`;
+            `Welcome back, ${student.name}!`;
 
         loading.style.display = "none";
         studentDetails.style.display = "block";
@@ -63,8 +84,14 @@ async function loadStudentDetails() {
 
         loading.style.display = "none";
 
-        errorMessage.textContent =
-            "Unable to load student details.";
+        errorMessage.innerHTML = `
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>Unable to load student profile details. Please make sure the backend is active.</span>
+        `;
 
         errorMessage.className = "message error";
 
